@@ -1,0 +1,4 @@
+openai
+streamlit
+paho-mqtt
+python-dotenv

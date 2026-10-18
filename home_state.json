@@ -1,0 +1,14 @@
+{
+  "ac": {
+    "state": "OFF"
+  },
+  "bedroom_light": {
+    "state": "OFF"
+  },
+  "hall_light": {
+    "state": "OFF"
+  },
+  "fan": {
+    "state": "OFF"
+  }
+}
