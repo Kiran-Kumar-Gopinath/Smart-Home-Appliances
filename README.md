@@ -1,137 +1,104 @@
-# AIoT Smart Home Automation Using Gemini AI, MQTT and ESP32
+# AIoT Smart Home Automation Using MQTT, ESP32 and Wokwi
 
 ## Overview
 
-This project implements a chatbot-controlled smart home dashboard using Artificial Intelligence and the Internet of Things (AIoT). Users can control simulated home devices by entering natural-language commands into a chatbot powered by Google's Gemini AI.
+This project demonstrates a chatbot-controlled smart home simulation. Users enter text commands through a Streamlit web dashboard to control four simulated devices: a bedroom light, hall light, fan and air conditioner.
 
-The chatbot interprets the user's request and sends a command through the MQTT messaging protocol. An ESP32 simulated in Wokwi receives the command and controls LEDs representing smart home devices.
+The application recognizes commands, publishes them through MQTT, and sends them to an ESP32 simulated in Wokwi. The ESP32 controls LEDs representing each device.
+
+The current demonstration version uses rule-based command recognition, so it does not require an external AI API key.
 
 ## Features
 
-- **AI-powered chatbot:** Understands natural-language device control requests using Gemini.
-- **MQTT communication:** Transfers commands from the Python dashboard to the ESP32 simulation.
-- **ESP32 simulation:** Uses Wokwi to simulate device control without requiring physical hardware.
-- **Individual device control:** Controls the bedroom light, hall light, fan and AC independently.
-- **Group device control:** Turns all simulated devices ON or OFF with one command.
-- **Interactive dashboard:** Built using Streamlit.
-- **Real-time visual feedback:** LEDs indicate the simulated state of each device.
+- Interactive Streamlit chatbot dashboard
+- MQTT communication using the HiveMQ public broker
+- ESP32 simulation in Wokwi
+- Individual ON/OFF control for four devices
+- Group commands to turn all devices ON or OFF
+- Visual LED feedback in the simulation
+- No paid AI API required for the current demonstration version
 
 ## System Architecture
 
-User Text Command → Streamlit Dashboard → Gemini AI → MQTT Broker → ESP32 in Wokwi → LED Indicators
+**User command → Streamlit dashboard → Command recognition → MQTT broker → ESP32 in Wokwi → LEDs**
 
 ## Technologies Used
 
 | Technology | Purpose |
 |---|---|
 | Python | Application logic |
-| Streamlit | Web-based chatbot dashboard |
-| Google Gemini API | Natural-language command interpretation |
-| MQTT / HiveMQ | Message communication |
+| Streamlit | Web dashboard |
+| Paho MQTT | MQTT communication from Python |
+| HiveMQ public broker | MQTT message broker |
 | ESP32 | Simulated IoT controller |
 | Wokwi | ESP32 and LED simulation |
-| Paho MQTT | MQTT communication in Python |
-| PubSubClient | MQTT communication on ESP32 |
-| python-dotenv | Environment configuration |
+| PubSubClient | MQTT library for ESP32 |
 
-## Devices Controlled
+## Supported Commands
 
-| Device | MQTT Command Examples |
+| Device | Example |
 |---|---|
-| Bedroom light | `BEDROOM ON`, `BEDROOM OFF` |
-| Hall light | `HALL ON`, `HALL OFF` |
-| Fan | `FAN ON`, `FAN OFF` |
-| Air conditioner | `AC ON`, `AC OFF` |
-| All devices | `ALL ON`, `ALL OFF` |
+| Bedroom light | `Turn on the bedroom light` |
+| Hall light | `Turn off the hall light` |
+| Fan | `Turn on the fan` |
+| Air conditioner | `Turn on the AC` |
+| All devices | `Turn on all things` |
+| All devices | `Turn off all things` |
 
-## Example User Commands
+## Requirements
 
-- Turn on the bedroom light.
-- Switch off the hall light.
-- I am feeling hot. Turn on the fan.
-- Turn on the AC.
-- Turn on all things.
-- Turn off all things.
+- Python
+- Visual Studio Code or another Python editor
+- A Wokwi account
+- Internet connection
 
-## Project Setup
+## Setup Instructions
 
-### 1. Requirements
+### 1. Install Python dependencies
 
-Install Python and Visual Studio Code. You will also need:
-- A Google Gemini API key
-- A Wokwi account and ESP32 simulation
-- An internet connection
-- Access to an MQTT broker
-
-### 2. Clone the repository
+Open a terminal in the project folder and run:
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/AIoT-Smart-Home-Automation.git
-cd AIoT-Smart-Home-Automation
+python -m pip install streamlit paho-mqtt
 ```
 
-Replace `YOUR-USERNAME` with your GitHub username.
+### 2. Start the dashboard
 
-### 3. Install Python dependencies
-
-```bash
-python -m pip install streamlit paho-mqtt python-dotenv google-genai
-```
-
-### 4. Configure environment variables
-
-Create a `.env` file in the project folder:
-
-```text
-GEMINI_API_KEY=your_gemini_api_key_here
-GEMINI_MODEL=your_supported_gemini_model
-MQTT_BROKER=broker.hivemq.com
-MQTT_PORT=1883
-```
-
-Replace the API key and model placeholder with your own valid values. Use a Gemini model currently available to your API key.
-
-**Security:** Never upload your actual API key or `.env` file to GitHub.
-
-### 5. Configure the MQTT topic
-
-The Python dashboard and ESP32 sketch must use the exact same topic:
-
-```text
-smart_home/kiran_home_7319/commands
-```
-
-If you change this topic, update it in both `app.py` and `sketch.ino`.
-
-### 6. Run the dashboard
-
-Start the Streamlit application:
+Run:
 
 ```bash
 python -m streamlit run app.py
 ```
 
-Open the local URL displayed in the terminal, usually `http://localhost:8501`.
+Open the local URL shown in the terminal, usually `http://localhost:8501`.
 
-### 7. Run the ESP32 simulation
+### 3. Start the ESP32 simulation
 
-1. Open the Wokwi ESP32 project.
-2. Ensure the `PubSubClient` library is included.
-3. Check that the LED pin assignments and MQTT topic match the Python application.
-4. Start the simulation.
-5. Verify that the Serial Monitor reports a successful Wi-Fi connection, MQTT connection and topic subscription.
-6. Enter a command in the Streamlit dashboard and observe the LED response.
+1. Open the Wokwi project.
+2. Confirm that the PubSubClient library is included.
+3. Start the simulation.
+4. Wait for Wi-Fi and MQTT connection confirmation in the Serial Monitor.
 
-## ESP32 LED Pin Mapping
+### 4. Verify MQTT settings
 
-| Device | ESP32 GPIO |
+The Python application and ESP32 sketch must use the same MQTT broker and topic.
+
+Broker: `broker.hivemq.com`
+
+Port: `1883`
+
+Topic: `smart_home/kiran_home_7319/commands`
+
+## ESP32 Pin Mapping
+
+| Device | GPIO |
 |---|---:|
-| Bedroom light | GPIO 16 |
-| Hall light | GPIO 17 |
-| Fan | GPIO 18 |
-| AC | GPIO 19 |
+| Bedroom light | 16 |
+| Hall light | 17 |
+| Fan | 18 |
+| AC | 19 |
 
-These LEDs represent devices in a simulation; they do not physically operate a fan, air conditioner or household lights.
+The LEDs represent devices in a simulation and do not physically control household appliances.
 
 ## Project Structure
 
@@ -140,37 +107,40 @@ AIoT-Smart-Home-Automation/
 ├── app.py
 ├── sketch.ino
 ├── libraries.txt
-├── .env                 # Local configuration; do not upload
-├── .gitignore
-└── README.md
+├── README.md
+└── .gitignore
 ```
 
-Your repository may also include screenshots, a project report, a presentation or a demonstration video.
+## Security Note
 
-## Testing
+This project uses a public MQTT broker over unencrypted port 1883 for demonstration purposes. Do not transmit sensitive information. A production deployment should use authenticated and encrypted MQTT communication.
 
-The project can be tested by sending individual ON/OFF commands for each device and group commands for all devices. Successful operation is indicated by the appropriate LED changes in Wokwi and MQTT messages in the Serial Monitor.
+Do not upload API keys, passwords, or `.env` files containing secrets to GitHub.
 
-## Advantages
+## Future Enhancements
 
-- Simple natural-language interaction
-- Low-cost simulation-based development
-- Modular integration of AI, MQTT and IoT
-- No physical appliances required for the demonstration
-- Easy to extend with additional simulated devices
-
-## Limitations and Future Enhancements
-
-- The current project uses simulated LEDs rather than physical appliances.
-- MQTT communication over public port 1883 is unencrypted and should be restricted to non-sensitive demonstration data.
-- Future versions could add authenticated private MQTT infrastructure, physical sensors, relay modules, device-state feedback, voice control and a more detailed dashboard.
+- Integration with an AI-powered natural-language model
+- Voice-based device control
+- Physical sensors and relay modules
+- Device-state feedback and monitoring
+- Secure MQTT authentication and encryption
 
 ## Conclusion
 
-This project demonstrates how Generative AI and IoT communication can work together to provide a natural-language smart home control interface. Gemini interprets user requests, MQTT transfers device commands, and a simulated ESP32 controls LEDs in Wokwi, providing a practical AIoT demonstration.
+This project demonstrates an IoT smart home control workflow using a web dashboard, MQTT messaging, an ESP32 and a Wokwi simulation. It provides a simple platform for exploring connected-device control and can be extended with AI services and physical hardware.
+
+**Project domain:** Artificial Intelligence of Things (AIoT)  
+**Current demo:** Rule-based text commands with MQTT and ESP32 simulation
 
 ## Author
 
-**Project:** Chatbot-Controlled Smart Home Dashboard  
-**Domain:** Artificial Intelligence of Things (AIoT)  
-**Platform:** Python, Streamlit, Gemini API, MQTT and Wokwi ESP32
+**Project Title:** Chatbot-Controlled Smart Home Dashboard
+
+**Domain:** Artificial Intelligence of Things (AIoT)
+
+**Technologies:** Python, Streamlit, MQTT, ESP32 and Wokwi
+
+**Developed by:** Kiran Kumar Gopinath
+
+**Project Purpose:** Academic project demonstrating text-based smart home automation using MQTT communication and ESP32 simulation.
+
